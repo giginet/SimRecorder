@@ -5,7 +5,7 @@ import CoreGraphics
 
 class Storage {
     private let DefaultTempDirName = "simrec"
-    private var url : NSURL?;
+    private var url : NSURL?
     
     init() {
         self.url = createTemporaryDirectory()
@@ -32,9 +32,7 @@ class Storage {
         let fileURL : NSURL = NSURL(string: filename, relativeToURL: self.url)!
         let properties = Dictionary<String, AnyObject>()
         let data : NSData = bitmapRep.representationUsingType(NSBitmapImageFileType.NSPNGFileType, properties: properties)!
-        if data.writeToFile(fileURL.path!, atomically: false) {
-            print(fileURL.path!)
-        } else {
+        if !data.writeToFile(fileURL.path!, atomically: false) {
             print("write to file failed")
         }
         return data
@@ -42,7 +40,9 @@ class Storage {
 }
 
 class Converter {
-    func createGIF(with images: [NSImage], loopCount: Int = 0, frameDelay: Double, destinationURL : NSURL, callback: (data: NSData?, succeed: Bool) -> ()) {
+    typealias ConvertFinishedCallback = (data: NSData?, succeed: Bool) -> ()
+    
+    func createGIF(with images: [NSImage], loopCount: Int = 0, frameDelay: Double, destinationURL : NSURL, callback : ConvertFinishedCallback?) {
         let fileProperties = [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFLoopCount as String: loopCount]]
         let frameProperties = [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFDelayTime as String: frameDelay]]
         
@@ -57,9 +57,13 @@ class Converter {
             }
             
             if CGImageDestinationFinalize(destination) {
-                callback(data: NSData(contentsOfURL: destinationURL), succeed: true)
+                if let callback = callback {
+                    callback(data: NSData(contentsOfURL: destinationURL), succeed: true)
+                }
             } else {
-                callback(data: nil, succeed: false)
+                if let callback = callback {
+                    callback(data: nil, succeed: false)
+                }
             }
         }
     }
@@ -69,7 +73,6 @@ class Converter {
         let imageRef = image.CGImageForProposedRect(&imageRect, context: nil, hints: nil)
         return imageRef
     }
-    
 }
 
 class Recorder {
@@ -127,22 +130,16 @@ class Recorder {
     
     func startCapture() {
         self.timer = NSTimer.scheduledTimerWithTimeInterval(0.2, target: self, selector: "takeScreenshot", userInfo: nil, repeats: true)
-        NSTimer.scheduledTimerWithTimeInterval(10.0, target: self, selector: "endCapture", userInfo: nil, repeats: false)
     }
     
-    @objc func endCapture() {
+    func endCapture(callback : Converter.ConvertFinishedCallback?) {
         self.timer?.invalidate()
         let destinationURL : NSURL = NSURL(fileURLWithPath: "/Users/giginet/Desktop/animation.gif")
-        self.converter.createGIF(with: self.images, frameDelay: 0.2, destinationURL: destinationURL, callback: { (data : NSData?, succeed : Bool) in
-            if succeed {
-                print("Gif animation generated")
-            } else {
-                print("Gif animation generation is failed")
-                exit(1)
-            }
-        })
+        self.converter.createGIF(with: self.images, frameDelay: 0.2, destinationURL: destinationURL, callback: callback)
     }
 }
+
+typealias SignalCallback = (@convention(c) (Int32) -> Void)!
 
 class Command {
     static func execute() {
@@ -151,17 +148,25 @@ class Command {
             print("iOS simulator seems not to launch")
             exit(EXIT_FAILURE)
         }
+        
+        let callback : @convention(block) (Int32) -> Void = { (Int32) -> Void in
+            recorder.endCapture({ (data : NSData?, succeed : Bool) in
+                if succeed {
+                    print("Gif animation generated")
+                    exit(EXIT_SUCCESS)
+                } else {
+                    print("Gif animation generation is failed")
+                    exit(EXIT_FAILURE)
+                }
+            })
+        }
+        
+        // Convert Objective-C block to C function pointer
+        let imp = imp_implementationWithBlock(unsafeBitCast(callback, AnyObject.self))
+        signal(SIGINT, unsafeBitCast(imp, SignalCallback.self))
         recorder.startCapture()
         autoreleasepool {
             NSRunLoop.currentRunLoop().run()
-            let handler = NSFileHandle.fileHandleWithStandardInput()
-            let inputData = handler.availableData
-            let str = String(data: inputData, encoding: NSUTF8StringEncoding)
-            print(str)
-            if str!.hasPrefix("q") {
-                recorder.endCapture()
-                print("finish")
-            }
         }
     }
 }
