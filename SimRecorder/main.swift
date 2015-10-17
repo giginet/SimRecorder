@@ -1,5 +1,4 @@
-#!/usr/bin/env swift -F /Library/Frameworks
-
+#!/usr/bin/env swift -framework OptionKit -F Carthage/Build/Mac
 import Cocoa
 import CoreGraphics
 import OptionKit

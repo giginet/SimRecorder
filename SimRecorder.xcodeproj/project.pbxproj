@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		077D89EA1BD275B900C53D55 /* OptionKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 077D89E91BD275B900C53D55 /* OptionKit.framework */; settings = {ASSET_TAGS = (); }; };
+		077D89EB1BD2769F00C53D55 /* OptionKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 077D89E91BD275B900C53D55 /* OptionKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		07A37EFD1BCEAADC007ADB0E /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A37EFC1BCEAADC007ADB0E /* main.swift */; };
 		07C1513A1BD21E8E00EA8034 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07C151391BD21E8E00EA8034 /* CoreGraphics.framework */; };
 /* End PBXBuildFile section */
@@ -14,16 +16,18 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		07A37EF71BCEAADC007ADB0E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 10;
 			files = (
+				077D89EB1BD2769F00C53D55 /* OptionKit.framework in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		077D89E91BD275B900C53D55 /* OptionKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OptionKit.framework; path = Carthage/Build/Mac/OptionKit.framework; sourceTree = "<group>"; };
 		07A37EF91BCEAADC007ADB0E /* SimRecorder */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SimRecorder; sourceTree = BUILT_PRODUCTS_DIR; };
 		07A37EFC1BCEAADC007ADB0E /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		07C151391BD21E8E00EA8034 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -34,6 +38,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				077D89EA1BD275B900C53D55 /* OptionKit.framework in Frameworks */,
 				07C1513A1BD21E8E00EA8034 /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -44,6 +49,7 @@
 		07A37EF01BCEAADC007ADB0E = {
 			isa = PBXGroup;
 			children = (
+				077D89E91BD275B900C53D55 /* OptionKit.framework */,
 				07C151391BD21E8E00EA8034 /* CoreGraphics.framework */,
 				07A37EFB1BCEAADC007ADB0E /* SimRecorder */,
 				07A37EFA1BCEAADC007ADB0E /* Products */,
@@ -148,6 +154,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -191,6 +198,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -210,6 +218,12 @@
 		07A37F011BCEAADC007ADB0E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/Mac",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -217,6 +231,12 @@
 		07A37F021BCEAADC007ADB0E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/Mac",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
