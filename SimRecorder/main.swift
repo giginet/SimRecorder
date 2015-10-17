@@ -31,7 +31,7 @@ class Storage {
         let bitmapRep : NSBitmapImageRep = NSBitmapImageRep(CGImage: image)
         let fileURL : NSURL = NSURL(string: filename, relativeToURL: self.url)!
         let properties = Dictionary<String, AnyObject>()
-        let data : NSData = bitmapRep.representationUsingType(NSBitmapImageFileType.NSPNGFileType, properties: properties)!
+        let data : NSData = bitmapRep.representationUsingType(NSBitmapImageFileType.NSGIFFileType, properties: properties)!
         if !data.writeToFile(fileURL.path!, atomically: false) {
             print("write to file failed")
         }
@@ -130,7 +130,7 @@ class Recorder {
 
     @objc private func takeScreenshot() {
         let imageRef : CGImageRef = CGWindowListCreateImage(CGRectNull, CGWindowListOption.OptionIncludingWindow, windowID!, CGWindowImageOption.BoundsIgnoreFraming)!
-        let data : NSData = self.storage.writeToFile(imageRef, filename: "\(self.frame).png")
+        let data : NSData = self.storage.writeToFile(imageRef, filename: "\(self.frame).gif")
         ++self.frame
         let image = NSImage(data: data)
         if let image = image {
