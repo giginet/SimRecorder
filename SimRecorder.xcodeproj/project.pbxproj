@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		07A37EFD1BCEAADC007ADB0E /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A37EFC1BCEAADC007ADB0E /* main.swift */; };
+		07C1513A1BD21E8E00EA8034 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07C151391BD21E8E00EA8034 /* CoreGraphics.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +26,7 @@
 /* Begin PBXFileReference section */
 		07A37EF91BCEAADC007ADB0E /* SimRecorder */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SimRecorder; sourceTree = BUILT_PRODUCTS_DIR; };
 		07A37EFC1BCEAADC007ADB0E /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		07C151391BD21E8E00EA8034 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +34,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				07C1513A1BD21E8E00EA8034 /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -41,6 +44,7 @@
 		07A37EF01BCEAADC007ADB0E = {
 			isa = PBXGroup;
 			children = (
+				07C151391BD21E8E00EA8034 /* CoreGraphics.framework */,
 				07A37EFB1BCEAADC007ADB0E /* SimRecorder */,
 				07A37EFA1BCEAADC007ADB0E /* Products */,
 			);
@@ -236,6 +240,7 @@
 				07A37F021BCEAADC007ADB0E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
