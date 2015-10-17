@@ -1,7 +1,8 @@
-#!/usr/bin/env swift
+#!/usr/bin/env swift -F /Library/Frameworks
 
 import Cocoa
 import CoreGraphics
+import OptionKit
 
 class Storage {
     private let DefaultTempDirName = "simrec"
@@ -76,12 +77,14 @@ class Converter {
 }
 
 class Recorder {
-    var windowID : CGWindowID?
-    var frame : UInt = 0
-    var timer : NSTimer?
-    let storage : Storage = Storage()
-    let converter : Converter = Converter()
-    var images : [NSImage] = []
+    private var windowID : CGWindowID?
+    private var frame : UInt = 0
+    private var timer : NSTimer?
+    private let storage : Storage = Storage()
+    private let converter : Converter = Converter()
+    private var images : [NSImage] = []
+    var fps : UInt = 12
+    var outputPath : String = "animation.gif"
     
     init() {
         self.windowID = self.simulatorWindowID()
@@ -114,11 +117,19 @@ class Recorder {
         return nil
     }
     
+    func secPerFrame() -> Double {
+        return 1.0 / Double(self.fps)
+    }
+    
+    func outputURL() -> NSURL {
+        return NSURL(string: self.outputPath)!
+    }
+    
     func isAttachSimulator() -> Bool {
         return self.windowID != nil
     }
 
-    @objc func takeScreenshot() {
+    @objc private func takeScreenshot() {
         let imageRef : CGImageRef = CGWindowListCreateImage(CGRectNull, CGWindowListOption.OptionIncludingWindow, windowID!, CGWindowImageOption.BoundsIgnoreFraming)!
         let data : NSData = self.storage.writeToFile(imageRef, filename: "\(self.frame).png")
         ++self.frame
@@ -129,48 +140,68 @@ class Recorder {
     }
     
     func startCapture() {
-        self.timer = NSTimer.scheduledTimerWithTimeInterval(0.2, target: self, selector: "takeScreenshot", userInfo: nil, repeats: true)
+        self.timer = NSTimer.scheduledTimerWithTimeInterval(self.secPerFrame(), target: self, selector: "takeScreenshot", userInfo: nil, repeats: true)
     }
     
     func endCapture(callback : Converter.ConvertFinishedCallback?) {
         self.timer?.invalidate()
-        let destinationURL : NSURL = NSURL(fileURLWithPath: "/Users/giginet/Desktop/animation.gif")
-        self.converter.createGIF(with: self.images, frameDelay: 0.2, destinationURL: destinationURL, callback: callback)
+        let destinationURL : NSURL = NSURL(fileURLWithPath: self.outputPath)
+        self.converter.createGIF(with: self.images, frameDelay: self.secPerFrame(), destinationURL: destinationURL, callback: callback)
     }
 }
-
-typealias SignalCallback = (@convention(c) (Int32) -> Void)!
 
 class Command {
-    static func execute() {
-        let recorder : Recorder = Recorder()
-        if !recorder.isAttachSimulator() {
-            print("iOS simulator seems not to launch")
-            exit(EXIT_FAILURE)
-        }
+    typealias SignalCallback = (@convention(c) (Int32) -> Void)!
+
+    static func execute(arguments : [String]) {
+        let frameRateOption = Option(trigger: OptionTrigger.Mixed("f", "fps"), numberOfParameters: 1, helpDescription: "")
+        let outputPathOption = Option(trigger: OptionTrigger.Mixed("o", "outputPath"), numberOfParameters: 1, helpDescription: "")
         
-        let callback : @convention(block) (Int32) -> Void = { (Int32) -> Void in
-            recorder.endCapture({ (data : NSData?, succeed : Bool) in
-                if succeed {
-                    print("Gif animation generated")
-                    exit(EXIT_SUCCESS)
-                } else {
-                    print("Gif animation generation is failed")
-                    exit(EXIT_FAILURE)
-                }
-            })
-        }
+        let parser = OptionParser(definitions: [frameRateOption, outputPathOption])
         
-        // Convert Objective-C block to C function pointer
-        let imp = imp_implementationWithBlock(unsafeBitCast(callback, AnyObject.self))
-        signal(SIGINT, unsafeBitCast(imp, SignalCallback.self))
-        recorder.startCapture()
-        autoreleasepool {
-            NSRunLoop.currentRunLoop().run()
+        do {
+            let (options, _) = try parser.parse(actualArguments)
+            
+            let recorder : Recorder = Recorder()
+            if !recorder.isAttachSimulator() {
+                print("iOS simulator seems not to launch")
+                exit(EXIT_FAILURE)
+            }
+            
+            if let frameRate = options[frameRateOption]?.first {
+                recorder.fps = UInt(frameRate)!
+            }
+            
+            if let outputPath = options[outputPathOption]?.first {
+                recorder.outputPath = outputPath
+            }
+            
+            let callback : @convention(block) (Int32) -> Void = { (Int32) -> Void in
+                recorder.endCapture({ (data : NSData?, succeed : Bool) in
+                    if succeed {
+                        print("Gif animation generated")
+                        exit(EXIT_SUCCESS)
+                    } else {
+                        print("Gif animation generation is failed")
+                        exit(EXIT_FAILURE)
+                    }
+                })
+            }
+            
+            // Convert Objective-C block to C function pointer
+            let imp = imp_implementationWithBlock(unsafeBitCast(callback, AnyObject.self))
+            signal(SIGINT, unsafeBitCast(imp, SignalCallback.self))
+            recorder.startCapture()
+            autoreleasepool {
+                NSRunLoop.currentRunLoop().run()
+            }
+            
+        } catch {
         }
     }
 }
 
-Command.execute()
+let actualArguments = Array(Process.arguments[1..<Process.arguments.count])
 
+Command.execute(actualArguments)
 
