@@ -2,27 +2,18 @@
 
 import Cocoa
 
-class Recorder {
-
-    var windowID : CGWindowID?
-    var frame : UInt = 0
+class Storage {
+    private let DefaultTempDirName = "simrec"
+    private var url : NSURL?;
     
-    init()
-    {
-        self.searchWindowID()
+    init() {
+        self.url = createTemporaryDirectory()
     }
-
-    func writeToFile(image : CGImageRef, path : String) {
-        let bitmapRep : NSBitmapImageRep = NSBitmapImageRep(CGImage: image)
-        let properties = Dictionary<String, AnyObject>()
-        let data : NSData = bitmapRep.representationUsingType(NSBitmapImageFileType.NSPNGFileType, properties: properties)!
-        data.writeToFile(path, atomically: false)
-    }
-
+    
     func createTemporaryDirectory() -> NSURL?
     {
         let url : NSURL = NSURL(fileURLWithPath: NSTemporaryDirectory())
-        let pathURL : NSURL = url.URLByAppendingPathComponent("simrec")
+        let pathURL : NSURL = url.URLByAppendingPathComponent(DefaultTempDirName)
         let fileManager = NSFileManager.defaultManager()
         do {
             try fileManager.createDirectoryAtURL(pathURL, withIntermediateDirectories: true, attributes: nil)
@@ -31,8 +22,33 @@ class Recorder {
             return nil
         }
     }
+    
+    func basePath() -> String? {
+        return self.url?.absoluteString;
+    }
+    
+    func writeToFile(image : CGImageRef, filename : String) {
+        let bitmapRep : NSBitmapImageRep = NSBitmapImageRep(CGImage: image)
+        let path : String = "\(self.basePath())/\(filename)"
+        let properties = Dictionary<String, AnyObject>()
+        let data : NSData = bitmapRep.representationUsingType(NSBitmapImageFileType.NSPNGFileType, properties: properties)!
+        data.writeToFile(path, atomically: false)
+    }
 
-    func searchWindowID()
+}
+
+class Recorder {
+    var windowID : CGWindowID?
+    var frame : UInt = 0
+    let storage : Storage;
+    
+    init()
+    {
+        self.storage = Storage()
+        self.windowID = self.simulatorWindowID()
+    }
+
+    func simulatorWindowID() -> CGWindowID?
     {
         let simulators : [NSRunningApplication] = NSWorkspace.sharedWorkspace().runningApplications.filter({
             (app : NSRunningApplication) in
@@ -43,35 +59,55 @@ class Recorder {
             
             let windowArray : CFArrayRef = CGWindowListCopyWindowInfo(CGWindowListOption.OptionOnScreenOnly, 0)!
             let windows : NSArray = windowArray as NSArray
-            for window in windows
-            {
+            for window in windows {
                 let dict = window as! Dictionary<String, AnyObject>
                 let windowIDNumber : NSNumber = dict["kCGWindowNumber"] as! NSNumber
                 let ownerPID : NSNumber = dict["kCGWindowOwnerPID"] as! NSNumber
-                if ownerPID.intValue == Int32(simulator.processIdentifier)
-                {
-                    self.windowID = CGWindowID(windowIDNumber.intValue)
+                if ownerPID.intValue == Int32(simulator.processIdentifier) {
+                    return CGWindowID(windowIDNumber.intValue)
                 }
             }
         }
+        return nil
+    }
+    
+    func isAttachSimulator() -> Bool
+    {
+        return self.windowID != nil
     }
 
     func takeScreenshot()
     {
         let rect : CGRect = CGRectNull
         let imageRef : CGImageRef = CGWindowListCreateImage(rect, CGWindowListOption.OptionIncludingWindow, windowID!, CGWindowImageOption.Default)!
-        writeToFile(imageRef, path: "/Users/giginet/Desktop/ss\(self.frame).png")
+        self.storage.writeToFile(imageRef, filename: "\(self.frame).png")
         ++self.frame
     }
     
     func takeScreenshots() {
         NSTimer.scheduledTimerWithTimeInterval(0.2, target: self, selector: "takeScreenshot", userInfo: nil, repeats: true)
     }
-    
 }
 
-let recorder : Recorder = Recorder()
-while true {
-    sleep(1)
-    recorder.takeScreenshot()
+class Command {
+    static func execute()
+    {
+        let recorder : Recorder = Recorder()
+        if !recorder.isAttachSimulator() {
+            print("iOS simulator seems not to launch")
+            exit(EXIT_FAILURE)
+        }
+        while true {
+            let handler = NSFileHandle.fileHandleWithStandardInput()
+            let inputData = handler.availableData
+            let str = String(data: inputData, encoding: NSUTF8StringEncoding)
+            print(str)
+            sleep(1)
+            recorder.takeScreenshot()
+        }
+    }
 }
+
+Command.execute()
+
+
