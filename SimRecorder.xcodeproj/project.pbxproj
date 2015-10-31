@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		077D89EA1BD275B900C53D55 /* OptionKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 077D89E91BD275B900C53D55 /* OptionKit.framework */; settings = {ASSET_TAGS = (); }; };
+		077D89EA1BD275B900C53D55 /* OptionKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 077D89E91BD275B900C53D55 /* OptionKit.framework */; };
 		077D89EB1BD2769F00C53D55 /* OptionKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 077D89E91BD275B900C53D55 /* OptionKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		07A37EFD1BCEAADC007ADB0E /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A37EFC1BCEAADC007ADB0E /* main.swift */; };
 		07C1513A1BD21E8E00EA8034 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07C151391BD21E8E00EA8034 /* CoreGraphics.framework */; };
@@ -38,8 +38,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				077D89EA1BD275B900C53D55 /* OptionKit.framework in Frameworks */,
 				07C1513A1BD21E8E00EA8034 /* CoreGraphics.framework in Frameworks */,
+				077D89EA1BD275B900C53D55 /* OptionKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -224,6 +224,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
 				);
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -237,6 +238,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
 				);
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
