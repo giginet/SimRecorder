@@ -7,67 +7,47 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		077D89EA1BD275B900C53D55 /* OptionKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 077D89E91BD275B900C53D55 /* OptionKit.framework */; };
-		077D89EB1BD2769F00C53D55 /* OptionKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 077D89E91BD275B900C53D55 /* OptionKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		07A37EFD1BCEAADC007ADB0E /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A37EFC1BCEAADC007ADB0E /* main.swift */; };
-		07C1513A1BD21E8E00EA8034 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07C151391BD21E8E00EA8034 /* CoreGraphics.framework */; };
+		54210D771BEB88C10018FC44 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54210D761BEB88C10018FC44 /* main.swift */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		07A37EF71BCEAADC007ADB0E /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 12;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				077D89EB1BD2769F00C53D55 /* OptionKit.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
-		077D89E91BD275B900C53D55 /* OptionKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OptionKit.framework; path = Carthage/Build/Mac/OptionKit.framework; sourceTree = "<group>"; };
-		07A37EF91BCEAADC007ADB0E /* SimRecorder */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SimRecorder; sourceTree = BUILT_PRODUCTS_DIR; };
-		07A37EFC1BCEAADC007ADB0E /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		07C151391BD21E8E00EA8034 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		54210D661BEB887C0018FC44 /* SimRecorder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SimRecorder.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		54210D701BEB887C0018FC44 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		54210D761BEB88C10018FC44 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		07A37EF61BCEAADC007ADB0E /* Frameworks */ = {
+		54210D631BEB887C0018FC44 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				07C1513A1BD21E8E00EA8034 /* CoreGraphics.framework in Frameworks */,
-				077D89EA1BD275B900C53D55 /* OptionKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		07A37EF01BCEAADC007ADB0E = {
+		54210D5D1BEB887C0018FC44 = {
 			isa = PBXGroup;
 			children = (
-				077D89E91BD275B900C53D55 /* OptionKit.framework */,
-				07C151391BD21E8E00EA8034 /* CoreGraphics.framework */,
-				07A37EFB1BCEAADC007ADB0E /* SimRecorder */,
-				07A37EFA1BCEAADC007ADB0E /* Products */,
+				54210D681BEB887C0018FC44 /* SimRecorder */,
+				54210D671BEB887C0018FC44 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		07A37EFA1BCEAADC007ADB0E /* Products */ = {
+		54210D671BEB887C0018FC44 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				07A37EF91BCEAADC007ADB0E /* SimRecorder */,
+				54210D661BEB887C0018FC44 /* SimRecorder.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		07A37EFB1BCEAADC007ADB0E /* SimRecorder */ = {
+		54210D681BEB887C0018FC44 /* SimRecorder */ = {
 			isa = PBXGroup;
 			children = (
-				07A37EFC1BCEAADC007ADB0E /* main.swift */,
+				54210D701BEB887C0018FC44 /* Info.plist */,
+				54210D761BEB88C10018FC44 /* main.swift */,
 			);
 			path = SimRecorder;
 			sourceTree = "<group>";
@@ -75,13 +55,13 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		07A37EF81BCEAADC007ADB0E /* SimRecorder */ = {
+		54210D651BEB887C0018FC44 /* SimRecorder */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 07A37F001BCEAADC007ADB0E /* Build configuration list for PBXNativeTarget "SimRecorder" */;
+			buildConfigurationList = 54210D731BEB887C0018FC44 /* Build configuration list for PBXNativeTarget "SimRecorder" */;
 			buildPhases = (
-				07A37EF51BCEAADC007ADB0E /* Sources */,
-				07A37EF61BCEAADC007ADB0E /* Frameworks */,
-				07A37EF71BCEAADC007ADB0E /* CopyFiles */,
+				54210D621BEB887C0018FC44 /* Sources */,
+				54210D631BEB887C0018FC44 /* Frameworks */,
+				54210D641BEB887C0018FC44 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -89,53 +69,65 @@
 			);
 			name = SimRecorder;
 			productName = SimRecorder;
-			productReference = 07A37EF91BCEAADC007ADB0E /* SimRecorder */;
-			productType = "com.apple.product-type.tool";
+			productReference = 54210D661BEB887C0018FC44 /* SimRecorder.app */;
+			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		07A37EF11BCEAADC007ADB0E /* Project object */ = {
+		54210D5E1BEB887C0018FC44 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0700;
+				LastSwiftUpdateCheck = 0710;
+				LastUpgradeCheck = 0710;
 				ORGANIZATIONNAME = giginet;
 				TargetAttributes = {
-					07A37EF81BCEAADC007ADB0E = {
-						CreatedOnToolsVersion = 7.0.1;
+					54210D651BEB887C0018FC44 = {
+						CreatedOnToolsVersion = 7.1;
 					};
 				};
 			};
-			buildConfigurationList = 07A37EF41BCEAADC007ADB0E /* Build configuration list for PBXProject "SimRecorder" */;
+			buildConfigurationList = 54210D611BEB887C0018FC44 /* Build configuration list for PBXProject "SimRecorder" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
-			mainGroup = 07A37EF01BCEAADC007ADB0E;
-			productRefGroup = 07A37EFA1BCEAADC007ADB0E /* Products */;
+			mainGroup = 54210D5D1BEB887C0018FC44;
+			productRefGroup = 54210D671BEB887C0018FC44 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				07A37EF81BCEAADC007ADB0E /* SimRecorder */,
+				54210D651BEB887C0018FC44 /* SimRecorder */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		54210D641BEB887C0018FC44 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
-		07A37EF51BCEAADC007ADB0E /* Sources */ = {
+		54210D621BEB887C0018FC44 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				07A37EFD1BCEAADC007ADB0E /* main.swift in Sources */,
+				54210D771BEB88C10018FC44 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		07A37EFE1BCEAADC007ADB0E /* Debug */ = {
+		54210D711BEB887C0018FC44 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -152,9 +144,9 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -171,7 +163,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -179,7 +171,7 @@
 			};
 			name = Debug;
 		};
-		07A37EFF1BCEAADC007ADB0E /* Release */ = {
+		54210D721BEB887C0018FC44 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -196,9 +188,9 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -209,66 +201,59 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 			};
 			name = Release;
 		};
-		07A37F011BCEAADC007ADB0E /* Debug */ = {
+		54210D741BEB887C0018FC44 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
-				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
-				);
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				CLANG_ENABLE_MODULES = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = SimRecorder/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "net.gigi-net.SimRecorder";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
-		07A37F021BCEAADC007ADB0E /* Release */ = {
+		54210D751BEB887C0018FC44 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
-				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
-				);
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				CLANG_ENABLE_MODULES = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = SimRecorder/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "net.gigi-net.SimRecorder";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		07A37EF41BCEAADC007ADB0E /* Build configuration list for PBXProject "SimRecorder" */ = {
+		54210D611BEB887C0018FC44 /* Build configuration list for PBXProject "SimRecorder" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				07A37EFE1BCEAADC007ADB0E /* Debug */,
-				07A37EFF1BCEAADC007ADB0E /* Release */,
+				54210D711BEB887C0018FC44 /* Debug */,
+				54210D721BEB887C0018FC44 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		07A37F001BCEAADC007ADB0E /* Build configuration list for PBXNativeTarget "SimRecorder" */ = {
+		54210D731BEB887C0018FC44 /* Build configuration list for PBXNativeTarget "SimRecorder" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				07A37F011BCEAADC007ADB0E /* Debug */,
-				07A37F021BCEAADC007ADB0E /* Release */,
+				54210D741BEB887C0018FC44 /* Debug */,
+				54210D751BEB887C0018FC44 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 07A37EF11BCEAADC007ADB0E /* Project object */;
+	rootObject = 54210D5E1BEB887C0018FC44 /* Project object */;
 }
