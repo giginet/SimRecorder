@@ -53,11 +53,11 @@ class Storage {
 class Converter {
     typealias ConvertFinishedCallback = (data: NSData?, succeed: Bool) -> ()
     
-    func createGIF(with images: [NSImage], loopCount: Int = 0, frameDelay: Double, destinationURL : NSURL, callback : ConvertFinishedCallback?) {
+    func createGIF(with images: [NSImage], quality: Float = 1.0, loopCount: UInt = 0, frameDelay: Double, destinationURL : NSURL, callback : ConvertFinishedCallback?) {
         let frameCount = images.count
         let animationProperties = 
         [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFLoopCount as String: loopCount], 
-            kCGImageDestinationLossyCompressionQuality as String: 1.0]
+            kCGImageDestinationLossyCompressionQuality as String: quality]
         let frameProperties = [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFDelayTime as String: frameDelay, kCGImagePropertyGIFUnclampedDelayTime as String: frameDelay]]
         
         let destination = CGImageDestinationCreateWithURL(destinationURL, kUTTypeGIF, frameCount, nil)
@@ -89,8 +89,10 @@ class Recorder {
     private let storage : Storage = Storage()
     private let converter : Converter = Converter()
     private var images : [NSImage] = []
-    var fps : UInt = 5
-    var outputPath : String = "animation.gif"
+    var quality: Float = 1.0
+    var fps: UInt = 5
+    var outputPath: String = "animation.gif"
+    var loopCount: UInt = 0
     
     init() {
         self.windowID = self.simulatorWindowID()
@@ -169,7 +171,7 @@ class Recorder {
     func endCapture(callback : Converter.ConvertFinishedCallback?) {
         self.timer?.invalidate()
         let destinationURL : NSURL = NSURL(fileURLWithPath: self.outputPath)
-        self.converter.createGIF(with: self.images, frameDelay: self.secPerFrame(), destinationURL: destinationURL, callback: callback)
+        self.converter.createGIF(with: self.images, quality: self.quality, loopCount: self.loopCount, frameDelay: self.secPerFrame(), destinationURL: destinationURL, callback: callback)
     }
 }
 
@@ -177,10 +179,12 @@ class Command {
     typealias SignalCallback = (@convention(c) (Int32) -> Void)!
 
     static func execute(arguments : [String]) {
-        let frameRateOption = Option(trigger: OptionTrigger.Mixed("f", "fps"), numberOfParameters: 1, helpDescription: "")
-        let outputPathOption = Option(trigger: OptionTrigger.Mixed("o", "outputPath"), numberOfParameters: 1, helpDescription: "")
+        let frameRateOption = Option(trigger: OptionTrigger.Mixed("f", "fps"), numberOfParameters: 1, helpDescription: "Recording frames per second")
+        let outputPathOption = Option(trigger: OptionTrigger.Mixed("o", "outputPath"), numberOfParameters: 1, helpDescription: "Animation output path")
+        let qualityOption = Option(trigger: OptionTrigger.Mixed("q", "quality"), numberOfParameters: 1, helpDescription: "Quality of animations 0.0 ~ 1.0")
+        let loopCountOption = Option(trigger: OptionTrigger.Mixed("l", "loopCount"), numberOfParameters: 1, helpDescription: "Loop count of animations. if you passed 0, it animate eternally")
         
-        let parser = OptionParser(definitions: [frameRateOption, outputPathOption])
+        let parser = OptionParser(definitions: [frameRateOption, outputPathOption, qualityOption])
         
         do {
             let (options, _) = try parser.parse(actualArguments)
@@ -191,12 +195,20 @@ class Command {
                 exit(EXIT_FAILURE)
             }
             
-            if let frameRate = options[frameRateOption]?.first {
-                recorder.fps = UInt(frameRate)!
+            if let frameRate: UInt = options[frameRateOption]?.flatMap({ UInt($0) }).first {
+                recorder.fps = frameRate
             }
             
             if let outputPath = options[outputPathOption]?.first {
                 recorder.outputPath = outputPath
+            }
+            
+            if let quality: Float = options[qualityOption]?.flatMap({ Float($0) }).first {
+                recorder.quality = quality
+            }
+            
+            if let loopCount: UInt = options[loopCountOption]?.flatMap({ UInt($0) }).first {
+                recorder.loopCount = loopCount
             }
             
             let callback : @convention(block) (Int32) -> Void = { (Int32) -> Void in
@@ -218,7 +230,6 @@ class Command {
             autoreleasepool {
                 NSRunLoop.currentRunLoop().run()
             }
-            
         } catch {
         }
     }
