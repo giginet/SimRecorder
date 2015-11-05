@@ -3,6 +3,17 @@ import Cocoa
 import CoreGraphics
 import OptionKit
 
+extension NSImage {
+    var CGImage: CGImageRef {
+        get {
+            let imageData = self.TIFFRepresentation
+            let source = CGImageSourceCreateWithData(imageData!, nil)
+            let maskRef = CGImageSourceCreateImageAtIndex(source!, 0, nil)!
+            return maskRef;
+        }
+    }
+}
+
 class Storage {
     private let DefaultTempDirName = "simrec"
     private var url : NSURL?
@@ -31,7 +42,7 @@ class Storage {
         let bitmapRep : NSBitmapImageRep = NSBitmapImageRep(CGImage: image)
         let fileURL : NSURL = NSURL(string: filename, relativeToURL: self.url)!
         let properties = Dictionary<String, AnyObject>()
-        let data : NSData = bitmapRep.representationUsingType(NSBitmapImageFileType.NSGIFFileType, properties: properties)!
+        let data : NSData = bitmapRep.representationUsingType(NSBitmapImageFileType.NSPNGFileType, properties: properties)!
         if !data.writeToFile(fileURL.path!, atomically: false) {
             print("write to file failed")
         }
@@ -43,19 +54,21 @@ class Converter {
     typealias ConvertFinishedCallback = (data: NSData?, succeed: Bool) -> ()
     
     func createGIF(with images: [NSImage], loopCount: Int = 0, frameDelay: Double, destinationURL : NSURL, callback : ConvertFinishedCallback?) {
-        let fileProperties = [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFLoopCount as String: loopCount]]
-        let frameProperties = [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFDelayTime as String: frameDelay]]
+        let frameCount = images.count
+        let animationProperties = 
+        [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFLoopCount as String: loopCount], 
+            kCGImageDestinationLossyCompressionQuality as String: 1.0]
+        let frameProperties = [kCGImagePropertyGIFDictionary as String: [kCGImagePropertyGIFDelayTime as String: frameDelay, kCGImagePropertyGIFUnclampedDelayTime as String: frameDelay]]
         
-        let destination = CGImageDestinationCreateWithURL(destinationURL, kUTTypeGIF, images.count, nil)
-        
+        let destination = CGImageDestinationCreateWithURL(destinationURL, kUTTypeGIF, frameCount, nil)
         if let destination = destination {
-            CGImageDestinationSetProperties(destination, fileProperties)
-            
-            for image in images {
-                let imageRef : CGImageRef = self.createCGImageFromNSImage(image)!
-                CGImageDestinationAddImage(destination, imageRef, frameProperties)
+            CGImageDestinationSetProperties(destination, animationProperties)
+            for var i = 0; i < frameCount; ++i {
+                autoreleasepool {
+                    let image = images[i];
+                    CGImageDestinationAddImage(destination, image.CGImage, frameProperties)
+                }
             }
-            
             if CGImageDestinationFinalize(destination) {
                 if let callback = callback {
                     callback(data: NSData(contentsOfURL: destinationURL), succeed: true)
@@ -67,12 +80,6 @@ class Converter {
             }
         }
     }
-    
-    private func createCGImageFromNSImage(image : NSImage) -> CGImageRef? {
-        var imageRect:CGRect = CGRectMake(0, 0, image.size.width, image.size.height)
-        let imageRef = image.CGImageForProposedRect(&imageRect, context: nil, hints: nil)
-        return imageRef
-    }
 }
 
 class Recorder {
@@ -82,7 +89,7 @@ class Recorder {
     private let storage : Storage = Storage()
     private let converter : Converter = Converter()
     private var images : [NSImage] = []
-    var fps : UInt = 12
+    var fps : UInt = 5
     var outputPath : String = "animation.gif"
     
     init() {
@@ -130,12 +137,29 @@ class Recorder {
 
     @objc private func takeScreenshot() {
         let imageRef : CGImageRef = CGWindowListCreateImage(CGRectNull, CGWindowListOption.OptionIncludingWindow, windowID!, CGWindowImageOption.BoundsIgnoreFraming)!
-        let data : NSData = self.storage.writeToFile(imageRef, filename: "\(self.frame).gif")
+        let newRef = removeAlpha(imageRef, size: CGSizeMake(640, 1180))
+        let data : NSData = self.storage.writeToFile(newRef, filename: "\(self.frame).png")
         ++self.frame
         let image = NSImage(data: data)
         if let image = image {
             self.images.append(image)
         }
+    }
+    
+    private func removeAlpha(imageRef: CGImageRef, size: CGSize) -> CGImageRef {
+        let bitmapContext: CGContextRef? = CGBitmapContextCreate(nil, 
+            Int(size.width), 
+            Int(size.height),
+            CGImageGetBitsPerComponent(imageRef), 
+            CGImageGetBytesPerRow(imageRef), 
+            CGImageGetColorSpace(imageRef), 
+            CGImageAlphaInfo.NoneSkipLast.rawValue | CGBitmapInfo.ByteOrder32Little.rawValue)
+        let rect: CGRect = CGRectMake(0, 0, size.width, size.height)
+        if let bitmapContext = bitmapContext {
+            CGContextDrawImage(bitmapContext, rect, imageRef);
+            return CGBitmapContextCreateImage(bitmapContext)!
+        }
+        return imageRef
     }
     
     func startCapture() {
