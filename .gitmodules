@@ -1,3 +1,0 @@
-[submodule "Carthage/Checkouts/OptionKit"]
-	url = https://github.com/nomothetis/OptionKit.git
-	path = Carthage/Checkouts/OptionKit
