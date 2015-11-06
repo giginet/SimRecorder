@@ -176,7 +176,7 @@ class Recorder {
 }
 
 class Command {
-    typealias SignalCallback = (@convention(c) (Int32) -> Void)!
+    typealias SignalCallback = @convention(c) (Int32) -> Void
 
     static func execute(arguments : [String]) {
         let frameRateOption = Option(trigger: OptionTrigger.Mixed("f", "fps"), numberOfParameters: 1, helpDescription: "Recording frames per second")
@@ -187,10 +187,10 @@ class Command {
         let parser = OptionParser(definitions: [frameRateOption, outputPathOption, qualityOption])
         
         do {
-            let (options, _) = try parser.parse(actualArguments)
+            let (options, _) = try parser.parse(arguments)
             
             let recorder : Recorder = Recorder()
-            if !recorder.isAttachSimulator() {
+            guard recorder.isAttachSimulator() else {
                 print("iOS simulator seems not to launch")
                 exit(EXIT_FAILURE)
             }
