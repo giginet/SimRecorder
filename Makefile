@@ -1,5 +1,5 @@
 BUILD_TOOL?=xcodebuild
-XCODEFLAGS=-project 'SimRecorder.xcodeproj'
+XCODEFLAGS=-workspace 'SimRecorder.xcworkspace' -scheme 'SimRecorder-Release'
 
 all:
 	$(BUILD_TOOL) $(XCODEFLAGS) build
