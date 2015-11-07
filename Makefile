@@ -7,7 +7,7 @@ BUILD_TOOL?=xcrun
 BUILD_OPTION?=-sdk $(TARGET_SDK) swiftc $(SWIFT_FILE) -F$(CARTAGE_PATH) -Xlinker -rpath -Xlinker "$(FRAMEWORK_PATH)" -o $(EXECUTABLE_PATH)
 
 bootstrap:
-	carthage update --use-submodules
+	carthage update
 
 build: bootstrap
 	mkdir -p build
