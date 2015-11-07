@@ -84,11 +84,11 @@ class Converter {
 
 class Recorder {
     private var windowID : CGWindowID?
-    private var frame : UInt = 0
-    private var timer : NSTimer?
-    private let storage : Storage = Storage()
-    private let converter : Converter = Converter()
-    private var images : [NSImage] = []
+    private var frame: UInt = 0
+    private var timer: NSTimer!
+    private let storage: Storage = Storage()
+    private let converter: Converter = Converter()
+    private var images: [NSImage] = []
     var quality: Float = 1.0
     var fps: UInt = 5
     var outputPath: String = "animation.gif"
@@ -112,8 +112,8 @@ class Recorder {
             let windows : NSArray = windowArray as NSArray
             for window in windows {
                 let dict = window as! Dictionary<String, AnyObject>
-                let windowIDNumber : NSNumber = dict["kCGWindowNumber"] as! NSNumber
-                let ownerPID : NSNumber = dict["kCGWindowOwnerPID"] as! NSNumber
+                let windowIDNumber: NSNumber = dict["kCGWindowNumber"] as! NSNumber
+                let ownerPID: NSNumber = dict["kCGWindowOwnerPID"] as! NSNumber
                 if ownerPID.intValue == Int32(simulator.processIdentifier) {
                     windowIDs.append(CGWindowID(windowIDNumber.intValue))
                 }
@@ -139,7 +139,7 @@ class Recorder {
 
     @objc private func takeScreenshot() {
         let imageRef : CGImageRef = CGWindowListCreateImage(CGRectNull, CGWindowListOption.OptionIncludingWindow, windowID!, CGWindowImageOption.BoundsIgnoreFraming)!
-        let newRef = removeAlpha(imageRef, size: CGSizeMake(640, 1180))
+        let newRef = removeAlpha(imageRef)
         let data : NSData = self.storage.writeToFile(newRef, filename: "\(self.frame).png")
         ++self.frame
         let image = NSImage(data: data)
@@ -148,15 +148,17 @@ class Recorder {
         }
     }
     
-    private func removeAlpha(imageRef: CGImageRef, size: CGSize) -> CGImageRef {
-        let bitmapContext: CGContextRef? = CGBitmapContextCreate(nil, 
-            Int(size.width), 
-            Int(size.height),
+    private func removeAlpha(imageRef: CGImageRef) -> CGImageRef {
+        let width = CGImageGetWidth(imageRef)
+        let height = CGImageGetHeight(imageRef)
+        let bitmapContext: CGContextRef? = CGBitmapContextCreate(nil,
+            width,
+            height,
             CGImageGetBitsPerComponent(imageRef), 
             CGImageGetBytesPerRow(imageRef), 
             CGImageGetColorSpace(imageRef), 
             CGImageAlphaInfo.NoneSkipLast.rawValue | CGBitmapInfo.ByteOrder32Little.rawValue)
-        let rect: CGRect = CGRectMake(0, 0, size.width, size.height)
+        let rect: CGRect = CGRectMake(0, 0, CGFloat(width), CGFloat(height))
         if let bitmapContext = bitmapContext {
             CGContextDrawImage(bitmapContext, rect, imageRef);
             return CGBitmapContextCreateImage(bitmapContext)!
