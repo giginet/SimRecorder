@@ -14,6 +14,28 @@ extension NSImage {
     }
 }
 
+enum TargetSimulator: String {
+    case iOS = "ios"
+    case iOSWatch = "ios-watch"
+    case Android64ARM = "android64-arm"
+    case Android64X86 = "android64-x86"
+    case Android64MIPS = "android64-mips"
+    
+    func hasBundleId() -> Bool {
+        return self == .iOS || self == .iOSWatch
+    }
+    
+    func toFilterValue() -> String {
+        switch self {
+        case .iOS: return "com.apple.iphonesimulator"
+        case .iOSWatch: return "com.apple.watchsimulator"
+        case .Android64ARM: return "emulator64-arm"
+        case .Android64X86: return "emulator64-x86"
+        case .Android64MIPS: return "emulator64-mips"
+        }
+    }
+}
+
 class Storage {
     private let DefaultTempDirName = "simrec"
     private var url : NSURL?
@@ -93,18 +115,33 @@ class Recorder {
     var fps: UInt = 5
     var outputPath: String = "animation.gif"
     var loopCount: UInt = 0
+    var targetSimulator: TargetSimulator
     
-    init() {
+    convenience init() {
+        self.init(targetSimulator: .iOS)
+    }
+    
+    init(targetSimulator: TargetSimulator) {
+        self.targetSimulator = targetSimulator
         self.windowID = self.simulatorWindowID()
     }
 
     private func simulatorWindowID() -> CGWindowID? {
         var windowIDs : [CGWindowID] = []
         
-        let simulators : [NSRunningApplication] = NSWorkspace.sharedWorkspace().runningApplications.filter({
-            (app : NSRunningApplication) in
-            return app.bundleIdentifier == "com.apple.iphonesimulator"
-        })
+        let simulators : [NSRunningApplication]
+        if targetSimulator.hasBundleId() {
+            simulators = NSWorkspace.sharedWorkspace().runningApplications.filter({
+                (app : NSRunningApplication) in
+                return app.bundleIdentifier == targetSimulator.toFilterValue()
+            })
+        } else {
+            simulators = NSWorkspace.sharedWorkspace().runningApplications.filter({
+                (app : NSRunningApplication) in
+                return app.localizedName == targetSimulator.toFilterValue()
+            })
+        }
+        
         if (simulators.count > 0) {
             let simulator : NSRunningApplication = simulators.first!
             
@@ -185,13 +222,25 @@ class Command {
         let outputPathOption = Option(trigger: OptionTrigger.Mixed("o", "outputPath"), numberOfParameters: 1, helpDescription: "Animation output path")
         let qualityOption = Option(trigger: OptionTrigger.Mixed("q", "quality"), numberOfParameters: 1, helpDescription: "Quality of animations 0.0 ~ 1.0")
         let loopCountOption = Option(trigger: OptionTrigger.Mixed("l", "loopCount"), numberOfParameters: 1, helpDescription: "Loop count of animations. if you passed 0, it animate eternally")
+        let targetSimulatorOption = Option(trigger: OptionTrigger.Mixed("t", "targetSimulator"), numberOfParameters: 1, helpDescription: "Target simulator [\(TargetSimulator.iOS.rawValue)|\(TargetSimulator.Android64ARM.rawValue)|\(TargetSimulator.Android64X86.rawValue)|\(TargetSimulator.Android64MIPS.rawValue)]")
         
-        let parser = OptionParser(definitions: [frameRateOption, outputPathOption, qualityOption])
+        let parser = OptionParser(definitions: [frameRateOption, outputPathOption, qualityOption, loopCountOption, targetSimulatorOption])
         
         do {
             let (options, _) = try parser.parse(arguments)
             
-            let recorder : Recorder = Recorder()
+            let recorder : Recorder
+            
+            if let targetSimulator = options[targetSimulatorOption]?.first {
+                if let targetSimulatorEnum = TargetSimulator.init(rawValue: targetSimulator) {
+                    recorder = Recorder(targetSimulator: targetSimulatorEnum)
+                } else {
+                    recorder = Recorder()
+                }
+            } else {
+                recorder = Recorder()
+            }
+            
             guard recorder.isAttachSimulator() else {
                 print("iOS simulator seems not to launch")
                 exit(EXIT_FAILURE)
