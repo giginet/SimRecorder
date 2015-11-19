@@ -6,7 +6,7 @@
 ```
 $ brew install carthage
 $ brew tap giginet/utils
-$ brew install simrec
+$ brew install simrecorder
 ```
 
 ## Usage
